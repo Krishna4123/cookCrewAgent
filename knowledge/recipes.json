@@ -1,0 +1,220 @@
+[
+  {
+    "name": "Spicy Chicken Fried Rice",
+    "ingredients": ["chicken breast", "rice", "soy sauce", "chili paste", "garlic", "ginger", "green onions", "eggs", "sesame oil", "vegetable oil"],
+    "steps": [
+      "Cook rice and let it cool completely.",
+      "Dice chicken breast into small cubes and season with salt and pepper.",
+      "Heat oil in a wok over high heat, stir-fry chicken until cooked through.",
+      "Push chicken to the side, scramble eggs in the same wok.",
+      "Add garlic and ginger, stir-fry for 30 seconds.",
+      "Add cold rice and stir-fry for 3-4 minutes.",
+      "Mix in soy sauce and chili paste.",
+      "Garnish with green onions and a drizzle of sesame oil."
+    ],
+    "time": "30 minutes",
+    "cuisine": "Asian",
+    "tags": ["spicy", "chicken", "rice", "quick"],
+    "nutrition": {
+      "calories": "520 kcal",
+      "protein": "38g",
+      "carbs": "55g",
+      "fat": "14g"
+    }
+  },
+  {
+    "name": "Chicken and Rice Soup",
+    "ingredients": ["chicken thighs", "rice", "carrots", "celery", "onion", "garlic", "chicken broth", "thyme", "bay leaf", "salt", "pepper"],
+    "steps": [
+      "Sauté onion, carrots, and celery in a large pot until softened.",
+      "Add garlic and cook for 1 minute.",
+      "Add chicken thighs, broth, thyme, and bay leaf.",
+      "Bring to a boil, then simmer for 20 minutes.",
+      "Remove chicken, shred it, and return to pot.",
+      "Add rice and cook for another 15 minutes until tender.",
+      "Season with salt and pepper, remove bay leaf before serving."
+    ],
+    "time": "50 minutes",
+    "cuisine": "American",
+    "tags": ["comfort food", "chicken", "rice", "soup"],
+    "nutrition": {
+      "calories": "380 kcal",
+      "protein": "32g",
+      "carbs": "42g",
+      "fat": "8g"
+    }
+  },
+  {
+    "name": "Spicy Shakshuka",
+    "ingredients": ["eggs", "tomatoes", "red bell pepper", "onion", "garlic", "cumin", "paprika", "cayenne pepper", "olive oil", "feta cheese", "parsley"],
+    "steps": [
+      "Heat olive oil in a skillet over medium heat.",
+      "Sauté onion and bell pepper until softened.",
+      "Add garlic, cumin, paprika, and cayenne, cook for 1 minute.",
+      "Add crushed tomatoes and simmer for 10 minutes.",
+      "Make wells in the sauce and crack eggs into them.",
+      "Cover and cook until eggs are set to your liking.",
+      "Top with crumbled feta and fresh parsley."
+    ],
+    "time": "25 minutes",
+    "cuisine": "Middle Eastern",
+    "tags": ["spicy", "eggs", "vegetarian", "breakfast"],
+    "nutrition": {
+      "calories": "290 kcal",
+      "protein": "18g",
+      "carbs": "22g",
+      "fat": "16g"
+    }
+  },
+  {
+    "name": "Garlic Butter Pasta",
+    "ingredients": ["spaghetti", "butter", "garlic", "parmesan cheese", "parsley", "salt", "black pepper", "olive oil", "lemon"],
+    "steps": [
+      "Cook spaghetti in salted boiling water until al dente.",
+      "Reserve 1 cup of pasta water before draining.",
+      "Melt butter with olive oil in a pan over medium heat.",
+      "Add minced garlic and cook until golden, about 2 minutes.",
+      "Toss in drained pasta with a splash of pasta water.",
+      "Add parmesan and toss until creamy.",
+      "Finish with lemon juice, parsley, salt, and pepper."
+    ],
+    "time": "20 minutes",
+    "cuisine": "Italian",
+    "tags": ["pasta", "vegetarian", "quick", "garlic"],
+    "nutrition": {
+      "calories": "480 kcal",
+      "protein": "14g",
+      "carbs": "68g",
+      "fat": "18g"
+    }
+  },
+  {
+    "name": "Beef Tacos",
+    "ingredients": ["ground beef", "taco shells", "onion", "garlic", "cumin", "chili powder", "paprika", "tomatoes", "lettuce", "cheddar cheese", "sour cream", "lime"],
+    "steps": [
+      "Brown ground beef in a skillet over medium-high heat.",
+      "Drain excess fat, add diced onion and garlic.",
+      "Season with cumin, chili powder, and paprika.",
+      "Cook for 5 more minutes until fragrant.",
+      "Warm taco shells in the oven at 350°F for 5 minutes.",
+      "Fill shells with beef mixture.",
+      "Top with tomatoes, lettuce, cheese, sour cream, and a squeeze of lime."
+    ],
+    "time": "25 minutes",
+    "cuisine": "Mexican",
+    "tags": ["beef", "tacos", "spicy", "quick"],
+    "nutrition": {
+      "calories": "560 kcal",
+      "protein": "34g",
+      "carbs": "38g",
+      "fat": "28g"
+    }
+  },
+  {
+    "name": "Lemon Herb Grilled Salmon",
+    "ingredients": ["salmon fillets", "lemon", "garlic", "olive oil", "dill", "parsley", "salt", "black pepper", "capers"],
+    "steps": [
+      "Marinate salmon with lemon juice, olive oil, garlic, dill, salt, and pepper for 15 minutes.",
+      "Preheat grill to medium-high heat.",
+      "Grill salmon for 4-5 minutes per side.",
+      "Serve with capers and fresh parsley."
+    ],
+    "time": "30 minutes",
+    "cuisine": "Mediterranean",
+    "tags": ["fish", "healthy", "grilled", "lemon"],
+    "nutrition": {
+      "calories": "340 kcal",
+      "protein": "42g",
+      "carbs": "4g",
+      "fat": "18g"
+    }
+  },
+  {
+    "name": "Vegetable Stir Fry",
+    "ingredients": ["broccoli", "bell peppers", "carrots", "snap peas", "mushrooms", "garlic", "ginger", "soy sauce", "sesame oil", "cornstarch", "vegetable oil"],
+    "steps": [
+      "Prepare all vegetables by cutting into bite-sized pieces.",
+      "Mix soy sauce, sesame oil, and cornstarch in a small bowl.",
+      "Heat oil in a wok over high heat.",
+      "Stir-fry harder vegetables (carrots, broccoli) first for 3 minutes.",
+      "Add remaining vegetables and stir-fry for 2 more minutes.",
+      "Add garlic and ginger, cook for 30 seconds.",
+      "Pour sauce over vegetables and toss until coated and glossy."
+    ],
+    "time": "20 minutes",
+    "cuisine": "Asian",
+    "tags": ["vegetarian", "vegan", "healthy", "quick"],
+    "nutrition": {
+      "calories": "210 kcal",
+      "protein": "8g",
+      "carbs": "28g",
+      "fat": "9g"
+    }
+  },
+  {
+    "name": "Spicy Thai Basil Chicken",
+    "ingredients": ["ground chicken", "thai basil", "garlic", "thai chilies", "fish sauce", "oyster sauce", "soy sauce", "sugar", "vegetable oil", "jasmine rice"],
+    "steps": [
+      "Cook jasmine rice according to package instructions.",
+      "Heat oil in a wok over high heat.",
+      "Add garlic and chilies, stir-fry for 30 seconds.",
+      "Add ground chicken and cook until browned.",
+      "Season with fish sauce, oyster sauce, soy sauce, and sugar.",
+      "Toss in fresh thai basil leaves and stir until wilted.",
+      "Serve over jasmine rice."
+    ],
+    "time": "20 minutes",
+    "cuisine": "Thai",
+    "tags": ["spicy", "chicken", "thai", "quick"],
+    "nutrition": {
+      "calories": "490 kcal",
+      "protein": "36g",
+      "carbs": "52g",
+      "fat": "14g"
+    }
+  },
+  {
+    "name": "Classic Margherita Pizza",
+    "ingredients": ["pizza dough", "tomato sauce", "fresh mozzarella", "basil leaves", "olive oil", "salt", "garlic"],
+    "steps": [
+      "Preheat oven to 500°F with a pizza stone inside.",
+      "Stretch dough into a 12-inch circle.",
+      "Spread tomato sauce leaving a 1-inch border.",
+      "Tear mozzarella and distribute evenly.",
+      "Drizzle with olive oil and season with salt.",
+      "Bake for 8-10 minutes until crust is golden.",
+      "Top with fresh basil leaves before serving."
+    ],
+    "time": "25 minutes",
+    "cuisine": "Italian",
+    "tags": ["pizza", "vegetarian", "cheese", "classic"],
+    "nutrition": {
+      "calories": "620 kcal",
+      "protein": "24g",
+      "carbs": "78g",
+      "fat": "22g"
+    }
+  },
+  {
+    "name": "Chickpea Curry",
+    "ingredients": ["chickpeas", "tomatoes", "onion", "garlic", "ginger", "coconut milk", "curry powder", "garam masala", "cumin", "turmeric", "olive oil", "cilantro", "rice"],
+    "steps": [
+      "Heat oil in a large pan, sauté onion until golden.",
+      "Add garlic and ginger, cook for 2 minutes.",
+      "Add curry powder, garam masala, cumin, and turmeric, stir for 1 minute.",
+      "Add crushed tomatoes and cook for 5 minutes.",
+      "Add chickpeas and coconut milk, simmer for 15 minutes.",
+      "Season with salt and garnish with cilantro.",
+      "Serve over steamed rice."
+    ],
+    "time": "35 minutes",
+    "cuisine": "Indian",
+    "tags": ["vegan", "curry", "chickpeas", "spicy"],
+    "nutrition": {
+      "calories": "420 kcal",
+      "protein": "16g",
+      "carbs": "58g",
+      "fat": "14g"
+    }
+  }
+]

@@ -1,0 +1,62 @@
+retrieve_recipe_task:
+  description: >
+    Use the recipe retriever tool to search for recipes matching this query: "{query}".
+    Retrieve the top relevant recipe chunks from the knowledge base.
+    Identify the single best matching recipe based on the query context.
+    Return the full recipe details including name, ingredients, steps, and time.
+  expected_output: >
+    A detailed description of the best matching recipe including:
+    - Recipe name
+    - Full ingredients list
+    - Step-by-step cooking instructions
+    - Estimated cooking time
+    - Why this recipe matches the query
+
+inventory_check_task:
+  description: >
+    Review the selected recipe from the previous task.
+    The user's available inventory is: {inventory}.
+    If inventory is empty or not provided, assume all ingredients are available.
+    Check which ingredients from the recipe are available in the inventory.
+    For any missing ingredients, suggest the best practical substitution.
+    Adjust the ingredients list accordingly.
+  expected_output: >
+    An updated ingredients list that:
+    - Marks which ingredients are available from inventory
+    - Lists substitutions for missing ingredients (format: "original -> substitute")
+    - Notes any ingredients that cannot be substituted
+    - Provides the final adjusted ingredients list for cooking
+
+nutrition_task:
+  description: >
+    Based on the final recipe and adjusted ingredients list from previous tasks,
+    estimate the nutritional content per serving.
+    Calculate approximate values for: calories, protein, carbohydrates, and fat.
+    Base your estimates on standard nutritional data for each ingredient.
+  expected_output: >
+    Nutritional estimates per serving:
+    - Calories (e.g., "520 kcal")
+    - Protein (e.g., "38g")
+    - Carbohydrates (e.g., "55g")
+    - Fat (e.g., "14g")
+
+format_output_task:
+  description: >
+    Compile all information from the previous tasks into a single strict JSON object.
+    Use ONLY the following structure — no extra fields, no markdown, no explanation:
+    {{
+      "name": "recipe name as string",
+      "ingredients": ["ingredient 1", "ingredient 2"],
+      "steps": ["step 1", "step 2"],
+      "time": "cooking time as string",
+      "nutrition": {{
+        "calories": "value with unit",
+        "protein": "value with unit",
+        "carbs": "value with unit",
+        "fat": "value with unit"
+      }}
+    }}
+    Output ONLY the raw JSON. No text before or after.
+  expected_output: >
+    A single valid JSON object with keys: name, ingredients, steps, time, nutrition.
+    No markdown code blocks. No explanation. Raw JSON only.

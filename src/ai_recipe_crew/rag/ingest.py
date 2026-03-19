@@ -22,13 +22,9 @@ def get_chroma_client() -> chromadb.PersistentClient:
     return chromadb.PersistentClient(path=persist_dir)
 
 
-def get_embedding_function() -> embedding_functions.OpenAIEmbeddingFunction:
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise ValueError("OPENAI_API_KEY environment variable is not set.")
-    return embedding_functions.OpenAIEmbeddingFunction(
-        api_key=api_key,
-        model_name="text-embedding-3-small",
+def get_embedding_function() -> embedding_functions.SentenceTransformerEmbeddingFunction:
+    return embedding_functions.SentenceTransformerEmbeddingFunction(
+        model_name="all-MiniLM-L6-v2"
     )
 
 

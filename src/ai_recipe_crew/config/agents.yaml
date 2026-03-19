@@ -9,7 +9,7 @@ recipe_finder:
     You excel at finding recipes that match specific ingredient combinations and
     flavor preferences. You use the retrieval tool to find the most relevant
     recipes and present the best match clearly.
-  verbose: true
+  verbose: false
   allow_delegation: false
 
 inventory_agent:
@@ -23,7 +23,7 @@ inventory_agent:
     available in the kitchen. You know hundreds of ingredient substitutions
     and can adapt any recipe to work with limited pantry items. You always
     provide practical, realistic substitutions.
-  verbose: true
+  verbose: false
   allow_delegation: false
 
 nutrition_agent:
@@ -37,7 +37,7 @@ nutrition_agent:
     dietary analysis. You can estimate nutritional content of any dish
     based on its ingredients and preparation method. Your estimates are
     always realistic and based on standard serving sizes.
-  verbose: true
+  verbose: false
   allow_delegation: false
 
 formatter_agent:
@@ -50,5 +50,5 @@ formatter_agent:
     You are a precise data engineer who specializes in structured data output.
     You take unstructured culinary information and transform it into clean,
     validated JSON. You never add commentary or extra text — only valid JSON.
-  verbose: true
+  verbose: false
   allow_delegation: false

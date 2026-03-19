@@ -1,155 +1,133 @@
 """
-CrewAI orchestration: defines agents, tasks, and the crew pipeline.
+CrewAI orchestration with a single-agent design to minimize token usage.
+Falls back to direct RAG + LLM call if CrewAI fails.
 """
+import json
 import logging
 import os
 from typing import Any
 
 from crewai import Agent, Crew, Process, Task
 from crewai.llm import LLM
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+from groq import Groq
 
+from ai_recipe_crew.rag.retriever import get_retriever
 from ai_recipe_crew.tools.retriever_tool import RecipeRetrieverTool
-from ai_recipe_crew.utils.loader import load_agents_config, load_tasks_config
 from ai_recipe_crew.utils.parser import safe_parse_recipe
 
 logger = logging.getLogger(__name__)
 
+# Strict output schema injected into every prompt
+_OUTPUT_SCHEMA = '''{
+  "name": "recipe name",
+  "ingredients": ["ingredient 1", "ingredient 2"],
+  "steps": ["step 1", "step 2"],
+  "time": "cooking time",
+  "nutrition": {
+    "calories": "value with unit",
+    "protein": "value with unit",
+    "carbs": "value with unit",
+    "fat": "value with unit"
+  }
+}'''
+
 
 def _build_llm() -> LLM:
-    model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-    return LLM(model=f"openai/{model}", temperature=0.3)
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        raise ValueError("GROQ_API_KEY environment variable is not set.")
+    model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+    return LLM(model=f"groq/{model}", api_key=api_key, temperature=0.3)
 
 
-def _build_agents(cfg: dict[str, Any], llm: LLM, retriever_tool: RecipeRetrieverTool) -> dict[str, Agent]:
-    agents = {}
+def _direct_llm_fallback(query: str, inventory: list[str]) -> dict[str, Any]:
+    """
+    Fallback: retrieve RAG context directly and call Groq API without CrewAI.
+    Uses minimal tokens — one single LLM call.
+    """
+    logger.info("Using direct LLM fallback.")
+    retriever = get_retriever()
+    context = retriever.retrieve_formatted(query=query, top_k=3)
 
-    agents["recipe_finder"] = Agent(
-        role=cfg["recipe_finder"]["role"],
-        goal=cfg["recipe_finder"]["goal"],
-        backstory=cfg["recipe_finder"]["backstory"],
-        tools=[retriever_tool],
-        llm=llm,
-        verbose=cfg["recipe_finder"].get("verbose", True),
-        allow_delegation=cfg["recipe_finder"].get("allow_delegation", False),
+    inventory_str = ", ".join(inventory) if inventory else "not specified"
+
+    prompt = f"""You are a recipe assistant. Based on the context below, suggest one recipe.
+
+RAG CONTEXT:
+{context}
+
+USER QUERY: {query}
+AVAILABLE INVENTORY: {inventory_str}
+
+Respond ONLY with a valid JSON object matching this exact schema (no extra text):
+{_OUTPUT_SCHEMA}"""
+
+    api_key = os.getenv("GROQ_API_KEY")
+    model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+    client = Groq(api_key=api_key)
+
+    response = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3,
+        max_tokens=800,
     )
-
-    agents["inventory_agent"] = Agent(
-        role=cfg["inventory_agent"]["role"],
-        goal=cfg["inventory_agent"]["goal"],
-        backstory=cfg["inventory_agent"]["backstory"],
-        llm=llm,
-        verbose=cfg["inventory_agent"].get("verbose", True),
-        allow_delegation=cfg["inventory_agent"].get("allow_delegation", False),
-    )
-
-    agents["nutrition_agent"] = Agent(
-        role=cfg["nutrition_agent"]["role"],
-        goal=cfg["nutrition_agent"]["goal"],
-        backstory=cfg["nutrition_agent"]["backstory"],
-        llm=llm,
-        verbose=cfg["nutrition_agent"].get("verbose", True),
-        allow_delegation=cfg["nutrition_agent"].get("allow_delegation", False),
-    )
-
-    agents["formatter_agent"] = Agent(
-        role=cfg["formatter_agent"]["role"],
-        goal=cfg["formatter_agent"]["goal"],
-        backstory=cfg["formatter_agent"]["backstory"],
-        llm=llm,
-        verbose=cfg["formatter_agent"].get("verbose", True),
-        allow_delegation=cfg["formatter_agent"].get("allow_delegation", False),
-    )
-
-    return agents
-
-
-def _build_tasks(
-    cfg: dict[str, Any],
-    agents: dict[str, Agent],
-    query: str,
-    inventory: list[str],
-) -> list[Task]:
-    inventory_str = ", ".join(inventory) if inventory else "not specified (assume all ingredients available)"
-
-    retrieve_task = Task(
-        description=cfg["retrieve_recipe_task"]["description"].format(query=query),
-        expected_output=cfg["retrieve_recipe_task"]["expected_output"],
-        agent=agents["recipe_finder"],
-    )
-
-    inventory_task = Task(
-        description=cfg["inventory_check_task"]["description"].format(inventory=inventory_str),
-        expected_output=cfg["inventory_check_task"]["expected_output"],
-        agent=agents["inventory_agent"],
-        context=[retrieve_task],
-    )
-
-    nutrition_task = Task(
-        description=cfg["nutrition_task"]["description"],
-        expected_output=cfg["nutrition_task"]["expected_output"],
-        agent=agents["nutrition_agent"],
-        context=[retrieve_task, inventory_task],
-    )
-
-    format_task = Task(
-        description=cfg["format_output_task"]["description"],
-        expected_output=cfg["format_output_task"]["expected_output"],
-        agent=agents["formatter_agent"],
-        context=[retrieve_task, inventory_task, nutrition_task],
-    )
-
-    return [retrieve_task, inventory_task, nutrition_task, format_task]
-
-
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=2, max=10),
-    retry=retry_if_exception_type(Exception),
-    reraise=True,
-)
-def _run_crew_with_retry(crew: Crew) -> Any:
-    """Run the crew with retry logic for transient LLM failures."""
-    return crew.kickoff()
+    raw = response.choices[0].message.content
+    return safe_parse_recipe(raw)
 
 
 def run_recipe_crew(query: str, inventory: list[str] | None = None) -> dict[str, Any]:
     """
-    Orchestrate the full CrewAI pipeline for recipe generation.
-
-    Args:
-        query: User's natural language recipe request.
-        inventory: Optional list of available ingredients.
-
-    Returns:
-        Parsed recipe dict.
+    Run a single-agent CrewAI pipeline. Falls back to direct LLM call on failure.
     """
     if inventory is None:
         inventory = []
 
-    logger.info(f"Starting recipe crew for query: '{query}' | inventory: {inventory}")
+    logger.info(f"Starting recipe crew | query='{query}' | inventory={inventory}")
 
-    agents_cfg = load_agents_config()
-    tasks_cfg = load_tasks_config()
-    llm = _build_llm()
-    retriever_tool = RecipeRetrieverTool()
-
-    agents = _build_agents(agents_cfg, llm, retriever_tool)
-    tasks = _build_tasks(tasks_cfg, agents, query, inventory)
-
-    crew = Crew(
-        agents=list(agents.values()),
-        tasks=tasks,
-        process=Process.sequential,
-        verbose=True,
-    )
+    inventory_str = ", ".join(inventory) if inventory else "not specified (assume all available)"
 
     try:
-        result = _run_crew_with_retry(crew)
-        raw_output = result.raw if hasattr(result, "raw") else str(result)
-        logger.info("Crew execution completed successfully.")
-    except Exception as e:
-        logger.error(f"Crew execution failed after retries: {e}")
-        raise
+        llm = _build_llm()
+        retriever_tool = RecipeRetrieverTool()
 
-    return safe_parse_recipe(raw_output)
+        agent = Agent(
+            role="Recipe Assistant",
+            goal="Find the best matching recipe and return strict JSON output.",
+            backstory="You are a culinary expert who finds recipes and outputs structured JSON.",
+            tools=[retriever_tool],
+            llm=llm,
+            verbose=False,
+            allow_delegation=False,
+            max_iter=3,
+        )
+
+        task = Task(
+            description=f"""Search for a recipe matching: "{query}"
+Available inventory: {inventory_str}
+
+Steps:
+1. Use the search tool ONCE to find relevant recipes.
+2. Pick the best match considering the query and inventory.
+3. Estimate nutrition if not available.
+4. Output ONLY this JSON (no extra text):
+{_OUTPUT_SCHEMA}""",
+            expected_output="A single valid JSON object with keys: name, ingredients, steps, time, nutrition.",
+            agent=agent,
+        )
+
+        crew = Crew(
+            agents=[agent],
+            tasks=[task],
+            process=Process.sequential,
+            verbose=False,
+        )
+
+        result = crew.kickoff()
+        raw = result.raw if hasattr(result, "raw") else str(result)
+        logger.info("Crew execution completed.")
+        return safe_parse_recipe(raw)
+
+    except Exception as e:
+        logger.warning(f"CrewAI failed ({type(e).__name__}: {e}). Switching to direct fallback.")
+        return _direct_llm_fallback(query=query, inventory=inventory)
